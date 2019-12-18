@@ -75,5 +75,5 @@ def decoder_test(dut):
                
 if __name__ == "__main__":
     dut= Decoder()
-    print(verilog.convert(Decoder()))
+#    print(verilog.convert(Decoder()))
     run_simulation(dut, decoder_test(dut), vcd_name="decoder_test.vcd")
