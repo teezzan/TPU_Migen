@@ -66,4 +66,5 @@ def Reg_test(dut):
                
 if __name__ == "__main__":
     dut= Register_File()
+    print(verilog.convert(Register_File()))
     run_simulation(dut, Reg_test(dut), vcd_name="RegFile_test.vcd")
