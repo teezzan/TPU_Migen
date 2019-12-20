@@ -73,15 +73,10 @@ def Ram_test(dut):
         #test WE pin
     yield dut.I_we.eq(0)
     for i in range(8):
-        yield dut.I_data.eq(random.randint(0,100))
+        yield dut.I_data.eq(random.randint(-100,0))
         yield dut.I_addr.eq(random.randint(0,32))
         yield
-        # Test read
-#    yield dut.I_we.eq(1)
-#    for i in range(16):
-#        yield dut.I_data.eq(random.randint(0,100))
-#        yield dut.I_addr.eq(random.randint(0,32))
-#        yield
+
         
         
 if __name__ == "__main__":
