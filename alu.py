@@ -150,13 +150,30 @@ class Alu(Module):
                                          O_memMode.eq(I_aluop[0])
                                          ],
                                 
-                                OPCODE_LOAD: [a_sign.eq(I_dataA),
-                                         b_sign.eq(I_dataB[11:16]),
-                                         s_result[0:16].eq(a_sign + b_sign),                                  
-                                         s_shouldBranch.eq(0),
-                                         O_memMode.eq(I_aluop[0])
+#                                OPCODE_LOAD: [a_sign.eq(I_dataA),
+#                                         b_sign.eq(I_dataB[11:16]),
+#                                         s_result[0:16].eq(a_sign + b_sign),                                  
+#                                         s_shouldBranch.eq(0),
+#                                         O_memMode.eq(I_aluop[0])
+#                                         ],
+                                
+                                OPCODE_LOAD: [
+                                        If(I_aluop[0] == 0,
+                                            Display("herre"),
+#                                           s_result[0:16].eq( Cat(0x00,I_dataIMM[0:8]) )
+                                           s_result[0:16].eq( Cat(Replicate(0, 8), I_dataIMM[0:8] ))
+                                                ).Else(s_result[0:16].eq(Cat( I_dataIMM[0:8], Replicate(0, 8))) )
                                          ],
-#                                
+                                
+                                
+#                                when OPCODE_LOAD =>
+#                                      if I_aluop(0) = '0' then
+#                                        s_result(15 downto 0) <= I_dataIMM(7 downto 0) & X"00";
+#                                      else
+#                                        s_result(15 downto 0) <= X"00" & I_dataIMM(7 downto 0);
+#                                      end if;
+#                                      s_shouldBranch <= '0';
+##                                
                                 
                                 OPCODE_CMP: [
                                         Display("Count"),
@@ -285,7 +302,7 @@ class Alu(Module):
                                 })
                    )]
     
-        self.comb += [
+        self.sync += [
                 O_dataResult.eq(s_result[0:16]),
                 O_shouldBranch.eq(s_shouldBranch)]
 #        
@@ -309,51 +326,51 @@ def ALU_test(dut):
     #Test writing to registers and write read at the same time.
     yield dut.I_en.eq(1)
     
-    yield dut.I_dataA.eq(0x0001)
+    yield dut.I_dataA.eq(0xffff)
     yield dut.I_dataB.eq(0x0002)
-    yield dut.I_aluop.eq(0b00000)
+    yield dut.I_aluop.eq(0b10000)
     yield dut.I_dataIMM.eq(0xF1FA)
     yield
-    
-    yield dut.I_dataA.eq(0x0005)
-    yield dut.I_dataB.eq(0x0003)
-    yield dut.I_aluop.eq(0b00010)
+#    
+#    yield dut.I_dataA.eq(0xffff)
+#    yield dut.I_dataB.eq(0x0003)
+#    yield dut.I_aluop.eq(0b10110)
     yield
     
-    yield dut.I_dataA.eq(0xfeee)
-    yield dut.I_dataB.eq(0x0000)
-    yield dut.I_aluop.eq(0b10010)
-    yield
-    
-    yield dut.I_dataA.eq(0xabcd)
-    yield dut.I_dataB.eq(0xabcd)
-    yield dut.I_aluop.eq(0b10010)
-    yield
-    
-    yield dut.I_dataA.eq(0x0001)
-    yield dut.I_dataB.eq(0x0002)
-    yield dut.I_aluop.eq(0b00000)
-    yield dut.I_dataIMM.eq(0xF1FA)
-    yield
-    
-    yield dut.I_dataA.eq(0x0051)
-    yield dut.I_dataB.eq(0x0562)
-    yield dut.I_aluop.eq(0b00000)
-    yield dut.I_dataIMM.eq(0xF1FA)
-    yield
-    
-    yield dut.I_dataA.eq(0xfeee)
-    yield dut.I_dataB.eq(0x0000)
-    yield dut.I_aluop.eq(0b10010)
-    yield
-    
-    yield dut.I_dataA.eq(0xabdd)
-    yield dut.I_dataB.eq(0xabdd)
-    yield dut.I_aluop.eq(0b10010)
+#    yield dut.I_dataA.eq(0xfeee)
+#    yield dut.I_dataB.eq(0x0000)
+#    yield dut.I_aluop.eq(0b10010)
+#    yield
+#    
+#    yield dut.I_dataA.eq(0xabcd)
+#    yield dut.I_dataB.eq(0xabcd)
+#    yield dut.I_aluop.eq(0b10010)
+#    yield
+#    
+#    yield dut.I_dataA.eq(0x0001)
+#    yield dut.I_dataB.eq(0x0002)
+#    yield dut.I_aluop.eq(0b00000)
+#    yield dut.I_dataIMM.eq(0xF1FA)
+#    yield
+#    
+#    yield dut.I_dataA.eq(0x0051)
+#    yield dut.I_dataB.eq(0x0562)
+#    yield dut.I_aluop.eq(0b00000)
+#    yield dut.I_dataIMM.eq(0xF1FA)
+#    yield
+#    
+#    yield dut.I_dataA.eq(0xfeee)
+#    yield dut.I_dataB.eq(0x0000)
+#    yield dut.I_aluop.eq(0b10010)
+#    yield
+#    
+#    yield dut.I_dataA.eq(0xabdd)
+#    yield dut.I_dataB.eq(0xabdd)
+#    yield dut.I_aluop.eq(0b10010)
     yield
     
 if __name__ == "__main__":
     dut= Alu()
 #    print(verilog.convert(Decoder()))
     run_simulation(dut, ALU_test(dut), vcd_name="ALU_test.vcd")        
-#    print(verilog.convert(Alu()))       
+    print(verilog.convert(Alu()))       
