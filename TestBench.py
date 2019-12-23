@@ -47,7 +47,7 @@ class cpu(Module):
         self.en_alu = en_alu = Signal()
         
         self.reset = reset = Signal()
-        i = Signal()
+        i = Signal(2)
         
         alu=Alu()
         self.submodules += alu
