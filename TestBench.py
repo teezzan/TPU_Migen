@@ -119,10 +119,18 @@ class cpu(Module):
             
             If(reset,
                pcop.eq(0b11)               
-               ).Elif(en_alu,
+               ).Elif(control.O_state[4],
                pcop.eq(0b01) 
                ).Else(pcop.eq(0b00)),
 #            pcop.eq(0b01),
+            
+            
+            
+#            If(reset,
+#               pcop.eq(0b11)               
+#               ).Elif(en_alu,
+#               pcop.eq(0b01) 
+#               ).Else(pcop.eq(0b00)),
             
             
                 
