@@ -38,8 +38,8 @@ class Mem_Ram(Module):
     def __init__(self):
         # Initialize the beginning of the memory with integers
         # from 0 to 19.
-        self.specials.mem = Memory(16, 32, init=list(range(20)))
-
+        self.specials.mem = Memory(16, 32, init=[0x80fe, 0x83ed, 0x2404, 0x8701, 0x8902, 0x0670, 0x2a0c, 0xc105, 0x80fe])
+#init=[5, 18, 32]
 
 class Ram2(Module):
     def __init__(self):

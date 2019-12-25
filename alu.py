@@ -300,7 +300,11 @@ class Alu(Module):
 #                                0b1101: O_regDwe.eq(0),
                                 "default": b_sign.eq(1)
                                 })
-                   )]
+                   ),
+#    O_dataResult.eq(s_result[0:16]),
+#                O_shouldBranch.eq(s_shouldBranch)
+    
+    ]
     
         self.sync += [
                 O_dataResult.eq(s_result[0:16]),

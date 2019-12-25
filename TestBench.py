@@ -14,6 +14,8 @@ from reg_file import Register_File
 from decoder import Decoder
 from alu import Alu
 from control_unit import Control_Unit
+from Ram import Ram2
+from pc_unit import Pc_unit
 import random
 
 class cpu(Module):
@@ -49,6 +51,27 @@ class cpu(Module):
         self.reset = reset = Signal()
         i = Signal(2)
         
+        self.ramWE = ramWE = Signal()
+        self.ramAddr = ramAddr = Signal(16)
+        self.ramRdata = ramRdata = Signal(16)
+        self.ramWdata = ramWdata = Signal(16)
+        
+        self.nPC = nPC = Signal(16)
+        self.PC = PC = Signal(16)
+        self.pcop = pcop = Signal(2)
+        self.in_pc = in_pc = Signal(16)
+        
+        
+        
+        
+        
+        
+        pc=Pc_unit()
+        self.submodules += pc
+        
+        ram=Ram2()
+        self.submodules += ram
+        
         alu=Alu()
         self.submodules += alu
         
@@ -64,15 +87,44 @@ class cpu(Module):
         self.sync +=[
                 If(en_regwrite,
                    i.eq(i+1),
-                   instruction.eq(instructions[i])
+#                   instruction.eq(instructions[i])
                    )
                 ]
         
         self.comb += [
-                instructions[0].eq(0x8902),
-        instructions[1].eq(0x0670),
-        instructions[2].eq(0x2a0c),
-        instructions[3].eq(0x2a0c),
+                
+                
+#            instructions[0].eq(0x8902),
+#            instructions[1].eq(0x0670),
+#            instructions[2].eq(0x2a0c),
+#            instructions[3].eq(0x2a0c),
+            
+            ram.I_clk.eq(I_clk),
+            ram.I_we.eq(ramWE),
+            ram.I_addr.eq(ramAddr),
+            ram.I_data.eq(ramWdata),
+            ramRdata.eq(ram.O_data),
+            
+            
+            
+            pc.I_clk.eq(I_clk),
+            pc.I_nPC.eq(in_pc),
+            pc.I_nPCop.eq(pcop),
+            PC.eq(pc.O_PC),
+            ramAddr.eq(PC),
+            ramWdata.eq(0xffff),
+            ramWE.eq(0),
+            instruction.eq(ramRdata),
+
+            
+            If(reset,
+               pcop.eq(0b11)               
+               ).Elif(en_alu,
+               pcop.eq(0b01) 
+               ).Else(pcop.eq(0b00)),
+#            pcop.eq(0b01),
+            
+            
                 
             control.I_reset.eq(reset),
             en_regwrite.eq(control.O_state[3]),
@@ -104,7 +156,7 @@ class cpu(Module):
             aluop.eq(decoder.O_aluop),
             decoder.I_dataInst.eq(instruction),
             decoder.I_clk.eq(I_clk),
-            decoder.I_en.eq(en),
+            
             
             reg.I_clk.eq(I_clk),
             reg.I_en.eq(en_regread | en_regwrite),
@@ -127,29 +179,26 @@ def cpu_test(dut):
     yield dut.reset.eq(1)
     yield
     yield
-    yield dut.reset.eq(0)
     yield
+    yield
+    yield
+    yield
+    yield
+    yield
+   
+
+    yield dut.reset.eq(0)
+ #    yield
 #    yield
 #    yield
 #    yield
 #    yield
 #    yield
 #    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-#    yield
-    for i in range(100):
+    for i in range(120):
         yield
+        
+            
 ##    yield dut.instruction.eq(0x8701)    
 #    while dut.en_regwrite == 0: 
 #        yield
@@ -173,4 +222,3 @@ def cpu_test(dut):
 if __name__ == "__main__":
     dut= cpu()
     run_simulation(dut, cpu_test(dut), vcd_name="cpu_test.vcd")
-#    print(verilog.convert(cpu()))

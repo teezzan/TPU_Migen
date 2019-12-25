@@ -26,7 +26,7 @@ class Control_Unit(Module):
                                 0b0010: O_state.eq(0b0100),
                                 0b0100: O_state.eq(0b1000),
                                 0b1000: O_state.eq(0b0001),
-                                "default": s_state.eq(0b0001)
+                                "default": O_state.eq(0b0001)
                                 }),
 #            O_state.eq(s_state)
                    ]
